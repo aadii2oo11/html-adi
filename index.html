@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DSCE Connect | Fresher Companion & Marketplace</title>
+  <style>
+    /* --- 1. CSS STYLING (Controls how the app looks) --- */
+    :root {
+      --primary: #1e3a8a;     /* DSCE Navy Blue */
+      --accent: #f59e0b;      /* Gold Accent */
+      --success: #10b981;     /* Green for Discounts */
+      --bg: #f3f4f6;
+      --card-bg: #ffffff;
+      --text: #1f2937;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary), #2563eb);
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+    .header-title h1 { font-size: 1.25rem; }
+    .header-title p { font-size: 0.8rem; opacity: 0.9; }
+    .revenue-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    /* Main Content Container */
+    main { max-width: 600px; margin: 20px auto; padding: 0 16px; }
+    .tab-section { display: none; }
+    .tab-section.active { display: block; animation: fadeIn 0.25s ease-in; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+      border-left: 4px solid var(--primary);
+    }
+    .card h3 { font-size: 1.05rem; margin-bottom: 6px; color: var(--primary); }
+    .card p { font-size: 0.9rem; color: #4b5563; margin-bottom: 10px; line-height: 1.4; }
+    .badge {
+      display: inline-block;
+      background: #e0e7ff;
+      color: var(--primary);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    /* Pricing & Buttons */
+    .price-row { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+    .mrp { text-decoration: line-through; color: #9ca3af; font-size: 0.9rem; }
+    .deal-price { color: var(--success); font-size: 1.15rem; font-weight: bold; }
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .btn-deal { background: var(--success); width: 100%; padding: 10px; margin-top: 6px; }
+
+    /* Bottom Navigation Bar */
+    nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+    }
+    .nav-btn {
+      background: none;
+      border: none;
+      color: #6b7280;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .nav-btn.active { color: var(--primary); }
+
+    /* Coupon Modal */
+    #coupon-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 50;
+    }
+    .modal-box {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      text-align: center;
+      max-width: 360px;
+      width: 100%;
+    }
+    .coupon-code {
+      background: #fef3c7;
+      border: 2px dashed var(--accent);
+      padding: 12px;
+      font-size: 1.4rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin: 14px 0;
+      color: #92400e;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header>
+    <div class="header-title">
+      <h1>DSCE Connect</h1>
+      <p>1st Year Companion • CSE (Cyber Security)</p>
+    </div>
+    <!-- Tracks your commercial commission in real time during testing -->
+    <div class="revenue-badge" id="commission-tracker">
+      My Cut: ₹0.00
+    </div>
+  </header>
+
+  <!-- MAIN APP BODY -->
+  <main>
+    <!-- TAB 1: STUDY HUB -->
+    <section id="tab-study" class="tab-section active">
+      <h2 style="margin-bottom: 12px; font-size: 1.1rem;">📚 1st Sem Notes & Question Banks</h2>
+      <div id="study-list"></div>
+    </section>
+
+    <!-- TAB 2: CAMPUS MAP -->
+    <section id="tab-map" class="tab-section">
+      <h2 style="margin-bottom: 12px; font-size: 1.1rem;">🗺️ DSCE Campus Buildings Guide</h2>
+      <div id="map-list"></div>
+    </section>
+
+    <!-- TAB 3: NEARBY STORES & DEALS (COMMERCIAL MODEL) -->
+    <section id="tab-stores" class="tab-section">
+      <h2 style="margin-bottom: 12px; font-size: 1.1rem;">🏷️ Nearby Stationery & Cafes (Below MRP)</h2>
+      <div id="stores-list"></div>
+    </section>
+
+    <!-- TAB 4: DSCE CLUBS -->
+    <section id="tab-clubs" class="tab-section">
+      <h2 style="margin-bottom: 12px; font-size: 1.1rem;">🎭 DSCE Student Clubs Directory</h2>
+      <div id="clubs-list"></div>
+    </section>
+  </main>
+
+  <!-- COUPON POPUP MODAL -->
+  <div id="coupon-modal">
+    <div class="modal-box">
+      <h3>Show This at the Counter!</h3>
+      <p id="modal-item-name" style="margin-top:6px; color:#4b5563;"></p>
+      <div class="coupon-code" id="modal-code">DSCE-000</div>
+      <p style="font-size:0.8rem; color:#6b7280; margin-bottom:14px;" id="modal-commission-note"></p>
+      <button class="btn" onclick="closeModal()">Done</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAVIGATION TABS -->
+  <nav>
+    <button class="nav-btn active" onclick="switchTab('study', this)">📚<span>Study</span></button>
+    <button class="nav-btn" onclick="switchTab('map', this)">🗺️<span>Campus Map</span></button>
+    <button class="nav-btn" onclick="switchTab('stores', this)">🏷️<span>Nearby Deals</span></button>
+    <button class="nav-btn" onclick="switchTab('clubs', this)">🎭<span>Clubs</span></button>
+  </nav>
+
+  <!-- --- 2. JAVASCRIPT LOGIC (Controls how the app behaves) --- -->
+  <script>
+    // Track total founder commission earned in this session
+    let totalCommissionEarned = 0;
+
+    // Initial Mock Data (Used if Backend Server isn't running yet)
+    const appData = {
+      study: [
+        { id: 1, subject: "Applied Mathematics-I", type: "Notes + Question Bank", module: "Modules 1 to 5", link: "#" },
+        { id: 2, subject: "Principles of Programming in C", type: "Important Exam Qs", module: "Pointers & Structures", link: "#" },
+        { id: 3, subject: "Interdisciplinary Design Thinking (IDT)", type: "Project Proposal & Rubrics", module: "1st Sem Guide", link: "#" }
+      ],
+      buildings: [
+        { name: "CSE (Cyber Security) Block", landmark: "Walk 150m straight from Main Gate, turn left near the auditorium.", floors: "Labs on 2nd Floor, HOD Cabin on 1st Floor" },
+        { name: "Central Library & Digital Center", landmark: "Opposite the main lawn / quadrangle.", floors: "Ground Floor: Issue Counter | 1st Floor: Reference & Reading" },
+        { name: "Heritage Building (Admin)", landmark: "Right at Main Gate entrance.", floors: "Admissions, Fee Counter, Scholarship Desk" }
+      ],
+      stores: [
+        { id: 101, shopName: "Sagar Stationery & Xerox (Gate 1)", item: "5x Lab Record Books + 10x Bluebooks Pack", mrp: 450, appPrice: 390, commissionPct: 5 },
+        { id: 102, shopName: "Kumaraswamy Layout Print Hub", item: "Engineering Drawing Kit (Drafter + Sheets)", mrp: 600, appPrice: 510, commissionPct: 6 },
+        { id: 103, shopName: "Campus Cravings Cafe", item: "Fresher Combo (Cold Coffee + Peri-Peri Sandwich)", mrp: 160, appPrice: 130, commissionPct: 8 }
+      ],
+      clubs: [
+        { name: "Point Blank", category: "Coding & Cyber Security", desc: "Competitive coding, CTFs, hackathons, and open-source development.", howToJoin: "Coding + interview round in October/November." },
+        { name: "IEEE DSCE", category: "Technical Society", desc: "Workshops on Robotics, AI, IoT, and research paper mentorship.", howToJoin: "Open membership drive for 1st years." },
+        { name: "LitClub & DebSoc", category: "Literary & Debate", desc: "MUNs, parliamentary debates, creative writing, and quizzes.", howToJoin: "Group discussion and impromptu speaking auditions." }
+      ]
+    };
+
+    // Function 1: Render all data into HTML cards when the page loads
+    function renderApp() {
+      // 1. Render Study Tab
+      document.getElementById('study-list').innerHTML = appData.study.map(item => `
+        <div class="card">
+          <span class="badge">${item.type}</span>
+          <h3>${item.subject}</h3>
+          <p>Coverage: ${item.module}</p>
+          <button class="btn" onclick="alert('In Phase 2, we will link Ayushi\\'s Google Drive PDF here!')">Download PDF</button>
+        </div>
+      `).join('');
+
+      // 2. Render Campus Map Tab
+      document.getElementById('map-list').innerHTML = appData.buildings.map(b => `
+        <div class="card">
+          <span class="badge">Campus Navigation</span>
+          <h3>📍 ${b.name}</h3>
+          <p><strong>How to reach:</strong> ${b.landmark}</p>
+          <p><strong>Inside:</strong> ${b.floors}</p>
+        </div>
+      `).join('');
+
+      // 3. Render Nearby Stores Tab (The Financial Model)
+      document.getElementById('stores-list').innerHTML = appData.stores.map(store => {
+        const studentSavings = store.mrp - store.appPrice;
+        return `
+          <div class="card" style="border-left-color: var(--success);">
+            <span class="badge" style="background:#d1fae5; color:#065f46;">Save ₹${studentSavings}</span>
+            <h3>${store.item}</h3>
+            <p>🏪 <strong>Store:</strong> ${store.shopName}</p>
+            <div class="price-row">
+              <span class="mrp">MRP: ₹${store.mrp}</span>
+              <span class="deal-price">App Price: ₹${store.appPrice}</span>
+            </div>
+            <button class="btn btn-deal" onclick="claimDeal(${store.id})">
+              Claim Student Discount Code
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      // 4. Render Clubs Tab
+      document.getElementById('clubs-list').innerHTML = appData.clubs.map(c => `
+        <div class="card">
+          <span class="badge">${c.category}</span>
+          <h3>${c.name}</h3>
+          <p>${c.desc}</p>
+          <p><strong>Recruitment:</strong> ${c.howToJoin}</p>
+        </div>
+      `).join('');
+    }
+
+    // Function 2: Switch between the 4 Bottom Navigation Tabs
+    function switchTab(tabName, btnElement) {
+      document.querySelectorAll('.tab-section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+
+      document.getElementById('tab-' + tabName).classList.add('active');
+      btnElement.classList.add('active');
+    }
+
+    // Function 3: Claim a Store Deal & Calculate Your Platform Commission
+    async function claimDeal(storeId) {
+      const store = appData.stores.find(s => s.id === storeId);
+      if (!store) return;
+
+      // Calculate your cut (e.g., 5% of ₹390 = ₹19.50)
+      const myCommission = (store.appPrice * (store.commissionPct / 100));
+      totalCommissionEarned += myCommission;
+
+      // Generate a unique 4-digit coupon code for the shopkeeper
+      const randomCode = "DSCE-" + Math.floor(1000 + Math.random() * 9000);
+
+      // Update Top Right Founder Revenue Tracker
+      document.getElementById('commission-tracker').innerText = `My Cut: ₹${totalCommissionEarned.toFixed(2)}`;
+
+      // Show Modal to Student
+      document.getElementById('modal-item-name').innerText = `${store.item} @ ₹${store.appPrice}`;
+      document.getElementById('modal-code').innerText = randomCode;
+      document.getElementById('modal-commission-note').innerText =
+        `[Backend Log]: Shopkeeper owes you ${store.commissionPct}% commission (₹${myCommission.toFixed(2)}) for this referral.`;
+      document.getElementById('coupon-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('coupon-modal').style.display = 'none';
+    }
+
+    // Run when page opens
+    renderApp();
+  </script>
+</body>
+</html>
